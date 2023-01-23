@@ -14,7 +14,7 @@ if [[ -z $1 && -z $2 && -z $3 && -z $4 ]]
   then
     echo "No arguments; use peer name as \$1, tunnel as \$2 and the last digit of the private ip as \$3"
     echo "To select the allowed ip range[s] type in place of \$4"
-    echo "0 to allow only the VPN range, 1 to add the server's LAN, 2 to add the server's gateway LAN to that and 3 to add Internet; 4 for only internet and VPN addresses"
+    echo "0 to allow only the VPN range, 1 to add the server's LAN, 2 to add the server's gateway LAN to that and 3 to add Internet; 4 for internet addresses only"
     echo "Otherwise write your own custom networks and subnets separated by comma eg. 172.16.20.16/30,10.50.90.0/24" 
     exit
 fi
