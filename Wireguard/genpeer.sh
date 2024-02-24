@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 2023.01.21 - Giacomo Girotto - V 0.1 - 2023.01.21
+# 2024.02.24 - Giacomo Girotto - V 0.2 - 2024.02.24
 # This code is provided under the terms of the GNU General Public License version 2 only (GPL-2.0)
 
 # This is a crude beta version of a simple script that generates peer configuration files
@@ -9,6 +9,12 @@
 # The IP addresses are substituted by letters for obvious reasons but it should be easy 
 # to replace them with the correct ones.
 
+TUNNEL_ADDERESS="Z.Z.Z."
+TUNNEL_NET="Z.Z.Z.0/24"
+NET_1="B.B.B.B/B"
+NET_2="C.C.C.C/C"
+SERVER_IP=D.D.D.D
+SERVER_PORT=EEEE
 
 if [[ -z $1 && -z $2 && -z $3 && -z $4 ]]
   then
@@ -32,24 +38,24 @@ fi
 
 case $4 in
 
-  0)												# ONLY TRAFFIC TO IPS IN THE VPN SUBNET ARE ROUTED THROUGH THE TUNNEL
-    ALLOWEDIPS="Z.Z.Z.0/24"
-    NET="VPN"
+  0)												# ONLY TRAFFIC TO IPS IN TUNNEL_NET ARE ROUTED THROUGH THE TUNNEL
+    ALLOWEDIPS="$TUNNEL_NET"
+    NET="TUNNEL"
     ;;
 
-  1)												# ONLY TRAFFIC TO IPS IN THE VPN SUBNET AND THE SERVER'S SUBNET ARE ROUTED THROUGH THE TUNNEL
-    ALLOWEDIPS="Z.Z.Z.0/24,B.B.B.B/B"
-    NET="VPN, LAN"
+  1)												# ONLY TRAFFIC TO IPS IN TUNNEL_NET AND NET_1 ARE ROUTED THROUGH THE TUNNEL
+    ALLOWEDIPS="$TUNNEL_NET,$NET_1"
+    NET="TUNNEL, NET_1"
     ;;
 
-  2)												# ONLY TRAFFIC TO IPS IN THE VPN SUBNET AND THE SERVER'S LAN AND IPS ON ANOTHER LAN ARE ROUTED THROUGH THE TUNNEL
-    ALLOWEDIPS="Z.Z.Z.0/24,B.B.B.B/B,C.C.C.C/C"
-    NET="VPN, LAN, GW_LAN"
+  2)												# ONLY TRAFFIC TO IPS IN TUNNEL_NET, NET_1 AND NET_2 ARE ROUTED THROUGH THE TUNNEL
+    ALLOWEDIPS="$TUNNEL_NET,$NET_1,$NET_2"
+    NET="TUNNEL, NET_1, NET_2"
     ;;
 
   3)
-    ALLOWEDIPS="0.0.0.0/0"							# ALL THE TRAFFIC IS ROUTED THROUGH THE TUNNEL
-    NET="VPN, LAN, GW_LAN, INTERNET"
+    ALLOWEDIPS="0.0.0.0/0"							# ALL TRAFFIC IS ROUTED THROUGH THE TUNNEL
+    NET="TUNNEL, NET_1, NET_2, INTERNET"
     ;;
 
   4)												# ONLY THE TRAFFIC TO THE INTERNET IS ROUTED THROUGH THE TUNNEL (I'VE EXCLUDED ALL THE PRIVATE IP ADDRESS RANGES - 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16)
@@ -68,18 +74,18 @@ esac
 rm /etc/wireguard/peers/$1_$2.conf
 echo "[interface]" >> /etc/wireguard/peers/$1_$2.conf
 echo "PrivateKey = $(</etc/wireguard/peers/$1_private.key)" >> /etc/wireguard/peers/$1_$2.conf
-echo "Address = Z.Z.Z.$3/24" >> /etc/wireguard/peers/$1_$2.conf
+echo "Address = $TUNNEL_ADDERESS$3/24" >> /etc/wireguard/peers/$1_$2.conf
 echo "" >> /etc/wireguard/peers/$1_$2.conf
 echo "[Peer]" >> /etc/wireguard/peers/$1_$2.conf
 echo "PublicKey = $(</etc/wireguard/public.key)" >> /etc/wireguard/peers/$1_$2.conf
 echo "AllowedIPs = $ALLOWEDIPS" >> /etc/wireguard/peers/$1_$2.conf
-echo "Endpoint = D.D.D.D:EEEE" >> /etc/wireguard/peers/$1_$2.conf
+echo "Endpoint = $SERVER_IP:EEEE" >> /etc/wireguard/peers/$1_$2.conf
 echo "" >> /etc/wireguard/peers/$1_$2.conf
 
 qrencode -t ansiutf8 < /etc/wireguard/peers/$1_$2.conf
 
 echo 
-echo "Config for peer $1: tunnel $2, IP: Z.Z.Z.$3/24, Network[s]: $NET" 
+echo "Config for peer $1: tunnel $2, IP: $TUNNEL_ADDERESS$3/24, Network[s]: $NET" 
 
 sudo wg set $2 peer $(</etc/wireguard/peers/$1_public.key) allowed-ips $ALLOWEDIPS
 
