@@ -79,7 +79,7 @@ echo "" >> /etc/wireguard/peers/$1_$2.conf
 echo "[Peer]" >> /etc/wireguard/peers/$1_$2.conf
 echo "PublicKey = $(</etc/wireguard/public.key)" >> /etc/wireguard/peers/$1_$2.conf
 echo "AllowedIPs = $ALLOWEDIPS" >> /etc/wireguard/peers/$1_$2.conf
-echo "Endpoint = $SERVER_IP:EEEE" >> /etc/wireguard/peers/$1_$2.conf
+echo "Endpoint = $SERVER_IP:$SERVER_PORT" >> /etc/wireguard/peers/$1_$2.conf
 echo "" >> /etc/wireguard/peers/$1_$2.conf
 
 qrencode -t ansiutf8 < /etc/wireguard/peers/$1_$2.conf
