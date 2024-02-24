@@ -53,8 +53,8 @@ case $4 in
     NET="TUNNEL, NET_1, NET_2"
     ;;
 
-  3)
-    ALLOWEDIPS="0.0.0.0/0"							# ALL TRAFFIC IS ROUTED THROUGH THE TUNNEL
+  3)                                                # ALL TRAFFIC IS ROUTED THROUGH THE TUNNEL
+    ALLOWEDIPS="0.0.0.0/0"	
     NET="TUNNEL, NET_1, NET_2, INTERNET"
     ;;
 
@@ -63,8 +63,8 @@ case $4 in
     NET="INTERNET"
     ;;
 
-  *)
-    ALLOWEDIPS=$4									# ONLY THE TRAFFIC TO THE SPECIFIED SUBNETS WILL BE ROUTED THROUGH THE TUNNEL
+  *)                                                # ONLY THE TRAFFIC TO THE SPECIFIED SUBNETS WILL BE ROUTED THROUGH THE TUNNEL
+    ALLOWEDIPS=$4						            
     NET="Custom: $4"
     ;;
 esac
